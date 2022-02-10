@@ -1,3 +1,4 @@
 # java_exercise_1
 
-README
+hany.shamloul@epita.fr
+hany.shamloul
