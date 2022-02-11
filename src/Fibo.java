@@ -1,34 +1,46 @@
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
-public class Fibo implements Command {
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
+public class Fibo implements Command{
 
     @Override
     public String name() {
+        // TODO Auto-generated method stub
         return "fibo";
     }
 
     @Override
-    public boolean run(Scanner s) {
-        System.out.println("Index fibonacci n = ?");
-        try {
-            int i = s.nextInt();
-            if(i < 2) {
-                System.out.println("n must be greater than 2 !");
-                s.close();
-                return false;
-            }
-            int u = 1, v = 1;
-            for(int j = 2; j < i; j++) {
-                int temp = u+v;
-                u = v;
-                v = temp;
-            }
-            System.out.println(v);
-        } catch (InputMismatchException e) {
-            System.out.println("You need to input a valid number");
+    public boolean run(Scanner scanner) {
+        System.out.println("La Question");
+        String strNb = scanner.nextLine();
+        int nb = Integer.parseInt(strNb);
+        if (nb == 0)
+        {
+            System.out.println("1");
         }
-        s.close();
+        else if (nb == 1 || nb == 2)
+        {
+            System.out.println("1");
+        }
+        else if (nb > 1)
+        {
+            int f1 = 1;
+            int f2 = 1;
+            int nb2 = 0;
+            for (int j = 2; j < nb ;j++)
+            {
+                nb2 = f1 + f2;
+                f1 = f2;
+                f2 = nb2;
+            }
+            System.out.println(nb2);
+        }
         return false;
     }
 

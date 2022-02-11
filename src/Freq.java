@@ -1,60 +1,57 @@
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.*;
 
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
-public class Freq implements Command {
-    public static void freq2() throws IOException {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Not an ugly ass l&f
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                | UnsupportedLookAndFeelException e) {
-            System.out.println("Couldnt change l&f :(");
-        }
-        JFileChooser chooser = new JFileChooser();
-        chooser.showOpenDialog(null);
-        FileInputStream in = new FileInputStream(chooser.getSelectedFile());
-
-        String a = new String(in.readAllBytes());
-
-        String[] words = a.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ");
-        Arrays.stream(words).filter((str) -> !str.isBlank())
-                .collect(Collectors.groupingBy((str) -> str)).entrySet().stream()
-                .sorted(Comparator.comparingInt((e) -> -e.getValue().size())).limit(3)
-                .forEach((str) -> System.out.print(str.getKey() + " "));
-        in.close();
-    }
+public class Freq implements Command{
 
     @Override
     public String name() {
+        // TODO Auto-generated method stub
         return "freq";
     }
 
     @Override
-    public boolean run(Scanner s) {
-        System.out.println("Choose a file !");
-        String chosen = "";
+    public boolean run(Scanner scanner) {
+        System.out.println("La Question");
+        String b = scanner.nextLine();
+        Path path = Paths.get(b);
         try {
-            chosen = s.next();
+            String content = java.nio.file.Files.readString(path);
+            content = content.toLowerCase(Locale.ROOT);
+            String[] words = content.split(" ");
+            List<String> list = Arrays.asList(words);
+            Map<Object, Integer> frequencyMap = list.stream()
+                    .collect(toMap(
+                            s -> s, // key is the word
+                            s -> 1, // value is 1
+                            Integer::sum));
+            List<Object> res = list.stream()
+                    .sorted(comparing(frequencyMap::get).reversed()) // sort by descending frequency
+                    .distinct() // take only unique values
+                    .limit(3)   // take only the first 10
+                    .collect(toList()); // put it in a returned list
+            for(int i=0;i<3;i++)
+            {
+                if (i != 2)
+                {
+                    System.out.print(res.get(i)+" ");
+                }else
+                {
+                    System.out.print(res.get(i));
+                }
+            }
+            System.out.println();
 
-            String a = Files.readString(Paths.get(chosen));
-            String[] words = a.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ");
-            Arrays.stream(words).filter((str) -> !str.isBlank())
-                    .collect(Collectors.groupingBy((str) -> str)).entrySet().stream()
-                    .sorted(Comparator.comparingInt((e) -> -e.getValue().size())).limit(3)
-                    .forEach((str) -> System.out.print(str.getKey() + " "));
-        } catch (IOException e) {
-            System.out.println("Unreadable file : " + e.getClass() + " " + e.getMessage());
+
+        } catch (Exception e) {
+            System.out.println("Unreadable file: " + e.toString());
         }
         return false;
     }
-
+    
 }

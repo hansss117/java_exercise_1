@@ -1,27 +1,52 @@
-import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
-public class Launcher {
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
-    public static final Command[] COMMANDS = {new Fibo(), new Freq(), new Predict(), new Quit()};
+public class Launcher{
+    public static void main(String[] args)
+    {
+        System.out.println("Bonjour");
+        Scanner scanner = new Scanner( System.in );
+        List<Command> Listcommands;
+        Listcommands = new ArrayList<>();
 
-    public static void main(String[] args){
-        System.out.println("Bienvenu !");
-        Scanner s = new Scanner(System.in);
-        String variable = "";
-        Command c = null;
+        Fibo fibo = new Fibo();
+        Freq freq = new Freq();
+        Quit quit = new Quit();
+        Predict predict = new Predict();
 
-        do {
-            variable = s.nextLine();
-            c = null;
-            for (Command co : COMMANDS) if (c.name().contentEquals(variable)){
-                c = co;
-                break;
+        Listcommands.add(fibo);
+        Listcommands.add(freq);
+        Listcommands.add(predict);
+        Listcommands.add(quit);
+
+        boolean end = false;
+        String msg;
+        int checker = 0;
+
+        do
+        {
+            checker = 0;
+            msg = scanner.nextLine();
+            //System.out.println("["+(int)msg.charAt(0)+"]");
+            for(Command command : Listcommands)
+            {
+                if (msg.equals(command.name())){
+                    end = command.run(scanner);
+                    checker = 1;
+                    break;
+                }
             }
-
-            if (c == null) {
+            if(checker == 0)
+            {
                 System.out.println("Unknown command");
             }
-        } while(c == null || !c.run(s));
-        s.close();
+        } while(!end);
+        scanner.close();
     }
 }
